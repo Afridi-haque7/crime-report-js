@@ -37,7 +37,7 @@ export function ReportTracker() {
   };
 
   return (
-    <div className={`w-full py-40 ${reportDetails ? "pt-[500px]" : "py-40"}`}>
+    <div className={`w-full ${reportDetails ? "py-20" : "py-40"}`}>
       {/* Header Section */}
       <div className="text-center mb-8">
         <div className="inline-flex h-9 items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/10 px-4 text-sm text-sky-400">

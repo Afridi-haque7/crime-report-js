@@ -45,6 +45,8 @@ export default function SignUp() {
         throw new Error(data.message || "Something went wrong");
       }
 
+      // send verfication mail 
+
       router.push("/auth/signin");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to sign up");

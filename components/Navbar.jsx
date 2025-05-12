@@ -37,7 +37,7 @@ export default function Navbar() {
             </div>
 
             {/* main navigation */}
-            <div className="hidden md:flex items-center justify-center space-x-6">
+            <div className="hidden lg:flex items-center justify-center space-x-6">
               <Link
                 href={"/submit-report"}
                 className="text-sm text-zinc-400 hover:text-white transition-all duration-200"
@@ -80,7 +80,7 @@ export default function Navbar() {
 
               {/* mobile menu button */}
               <button
-                className="md:hidden p-2 text-zinc-400 hover:text-white"
+                className="lg:hidden p-2 text-zinc-400 hover:text-white"
                 onClick={() => {
                   setIsMobileMenuOpen(true);
                 }}

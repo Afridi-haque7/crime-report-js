@@ -68,7 +68,7 @@ export default function Home() {
         </div>
 
         {/* features grid */}
-        <div className="mt-40 grid gap-6 sm:grid-cols-3">
+        <div className="mt-40 grid gap-6 md:grid-cols-3">
           {[
             {
               title: "Military-Grade Encryption",
@@ -133,7 +133,7 @@ export default function Home() {
           ].map((feature, i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-2xl bg-zinc-900 p-8 transition-all hover:bg-zinc-800/80"
+              className="group relative overflow-hidden rounded-2xl bg-zinc-900 p-8 transition-all focus:bg-zinc-800/80 active:bg-zinc-800/80 hover:bg-zinc-800/80"
             >
               <div className="absolute inset-0 bg-gradient-to-b from-sky-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <div className="relative">

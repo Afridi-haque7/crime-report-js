@@ -53,7 +53,6 @@ export function ReportForm({ onComplete }) {
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (data.title && data.description && data.reportType) {
         setFormData((prev) => ({
