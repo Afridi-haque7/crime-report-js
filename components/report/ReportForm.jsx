@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useId, useCallback } from "react";
+import Autocomplete from "react-google-autocomplete";
+
 // import { LocationInput } from "./LocationInput";
 
 // Possible specific report types
@@ -13,6 +15,31 @@ const REPORT_TYPES = [
   "Other",
 ];
 
+const LocationInput = ({ value, id, onChange, onCoordinateChange }) => {
+  const [location, setLocation] = useState(value);
+  const [query, setQuery] = useState(""); // user search value for places
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-zinc-400 mb-2">
+        Location
+      </label>
+      <input
+        type="text"
+        value={query}
+        onChange={handleChange}
+        className="w-full rounded-xl bg-zinc-900/50 border border-zinc-800 px-4 py-3.5 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+        required
+      />
+    </div>
+  );
+};
+
 export function ReportForm({ onComplete }) {
   const [formData, setFormData] = useState({
     incidentType: "",
@@ -21,7 +48,11 @@ export function ReportForm({ onComplete }) {
     description: "",
     title: "",
   });
-
+  const key = process.env.GEMINI_API_KEY;
+  if(!key) {
+    console.error("Google api key not found");
+    
+  }
   const [image, setImage] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [coordinates, setCoordinates] = useState({
@@ -288,19 +319,18 @@ export function ReportForm({ onComplete }) {
       </div>
 
       {/* Location Input */}
-      {/* <LocationInput
-        value={formData.location}
-        id={userId}
-        onChange={(value) =>
-          setFormData((prev) => ({ ...prev, location: value }))
-        }
-        onCoordinateChange={(lat, lng) =>
-          setCoordinates({
-            latitude: lat,
-            longitude: lng,
-          })
-        }
-      /> */}
+      <div>
+        <label className="block text-sm font-medium text-zinc-400 mb-2">
+          Location
+        </label>
+        <Autocomplete
+          apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
+          onPlaceSelected={(place) => {
+            console.log(place);
+          }}
+          className="w-full rounded-xl bg-zinc-900/50 border border-zinc-800 px-4 py-3.5 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+        />
+      </div>
 
       {/* Title */}
       <div>

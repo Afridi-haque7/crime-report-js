@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
+
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -24,6 +25,10 @@ const handler = NextAuth({
 
         if (!user) {
           throw new Error("No user found with this email");
+        }
+
+        if (!user.isVerified) {
+          throw new Error("Your account is not verified!");
         }
 
         if (user.role !== "ADMIN") {
@@ -48,22 +53,42 @@ const handler = NextAuth({
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = user.role;
+      // ✅ When logging in via NextAuth (CredentialsProvider)
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+
+      // ✅ When logging in via your custom API route
+      // The manual `/api/auth/signin` already encodes `role` & `sub` (id)
+      if (token.sub && !token.id) {
+        token.id = token.sub;
+      }
+
       return token;
     },
+
     async session({ session, token }) {
-      if (session.user) session.user.role = token.role;
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+      }
       return session;
     },
   },
+
   pages: {
     signIn: "/auth/signin",
   },
+
   session: {
     strategy: "jwt",
   },
+
+  secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };

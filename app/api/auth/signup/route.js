@@ -76,8 +76,8 @@ export async function POST(request) {
             
             <div class="instructions">
                 <p>To verify your email address, please click below:</p>
-                <a href={${process.env.BASE_URL}/api/auth/verify/${token}} class="button">Verify Email</a>
-                <p>${process.env.BASE_URL}/api/auth/verify/${token}</p>
+                <a href={${process.env.BASE_URL}/auth/verify/${token}} class="button">Verify Email</a>
+                <p>${process.env.BASE_URL}/auth/verify/${token}</p>
             </div>
             
             <p>If you didn't request this email, you can safely ignore it.</p>

@@ -1,8 +1,11 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import {toast} from "react-toastify";
+
+
 
 export default function SignIn() {
   const router = useRouter();
@@ -10,6 +13,20 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const verified = searchParams.get("verified");
+    const error = searchParams.get("error");
+
+    if (verified === "true") {
+      toast.success("Email verified successfully! Please sign in.");
+    } else if (error === "verification_failed") {
+      toast.error(
+        "Email verification failed. Please try again or contact support."
+      );
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,19 +34,32 @@ export default function SignIn() {
     setError("");
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
+      const response = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
       });
 
-      if (result?.error) {
-        setError("Invalid credentials");
-      } else {
-        router.push("/dashboard");
+      const data = await response.json();
+
+      console.log({ data });
+      
+
+      if(!response.ok){
+        setError(data.error || "");
+        throw new Error(data.message || "Something went wrong");
       }
+      router.push("/dashboard");
+      return;
     } catch (error) {
       setError("An error occurred during sign in: ", error);
+      console.error("error: ", error.message);
+      
     } finally {
       setIsLoading(false);
     }
@@ -111,6 +141,27 @@ export default function SignIn() {
                   "Sign in"
                 )}
               </button>
+            </div>
+            {/* Sign up page link */}
+            <div className="mt-6 text-center text-sm">
+              <span className="text-neutral-400">Don't have an account?</span>{" "}
+              <Link
+                href="/auth/signup"
+                className="text-blue-500 hover:text-blue-400 font-medium"
+              >
+                Create one
+              </Link>
+            </div>
+
+            {/* Reset Password link */}
+            <div className="mt-6 text-center text-sm">
+              <span className="text-neutral-400">Forgot Password?</span>{" "}
+              <Link
+                href="/auth/reset"
+                className="text-blue-500 hover:text-blue-400 font-medium"
+              >
+                Reset Now
+              </Link>
             </div>
           </form>
         </div>
