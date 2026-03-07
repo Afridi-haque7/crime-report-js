@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function PATCH(request, { params }) {
-  const { reportId } = params;
+  const { reportId } = await params;
 
   try {
     const session = await getServerSession(authOptions);

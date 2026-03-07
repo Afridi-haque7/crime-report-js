@@ -19,7 +19,32 @@ export default function SignUp() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
+    // Basic validation
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      setError("All fields are required");
+      setIsLoading(false);
+      return;
+    }
+    // Check if email matches regex pattern
+    const emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!formData.email.match(emailReg)) {
+      setError("Invalid email format");
+      setIsLoading(false);
+      return;
+    }
+    // match password regex
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if(!formData.password.match(passwordRegex)) {
+      setError("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+      setIsLoading(false);
+      return;
+    }
+    // Check if password and confirm password match
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
@@ -41,15 +66,10 @@ export default function SignUp() {
 
       const data = await response.json();
 
-      console.log(data);
-      
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
       }
-
-      // send verfication mail 
-
-      router.push("/auth/signin");
+      router.push("/auth/verify");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to sign up");
     } finally {
