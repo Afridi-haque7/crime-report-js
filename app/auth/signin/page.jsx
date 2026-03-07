@@ -1,171 +1,24 @@
-"use client";
+import { Suspense } from "react";
+import SignInContent from "./SignInContent";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import {toast} from "react-toastify";
-
-
-
-export default function SignIn() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const verified = searchParams.get("verified");
-    const error = searchParams.get("error");
-
-    if (verified === "true") {
-      toast.success("Email verified successfully! Please sign in.");
-    } else if (error === "verification_failed") {
-      toast.error(
-        "Email verification failed. Please try again or contact support."
-      );
-    }
-  }, [searchParams]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-
-      const data = await response.json();
-
-      console.log({ data });
-      
-
-      if(!response.ok){
-        setError(data.error || "");
-        throw new Error(data.message || "Something went wrong");
-      }
-      router.push("/dashboard");
-      return;
-    } catch (error) {
-      setError("An error occurred during sign in: ", error);
-      console.error("error: ", error.message);
-      
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+function SignInLoader() {
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h1 className="text-center text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent mb-2">
-          Welcome Back
-        </h1>
-        <h2 className="text-center text-sm text-neutral-400">
-          Sign in to access your admin dashboard
-        </h2>
+        <div className="h-10 bg-gray-700 rounded animate-pulse mb-4"></div>
+        <div className="h-4 bg-gray-700 rounded animate-pulse"></div>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-neutral-900/50 backdrop-blur-sm py-8 px-4 shadow-xl border border-neutral-800 rounded-xl sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit} autoComplete="on">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-neutral-300"
-              >
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-neutral-800 rounded-lg bg-neutral-900 placeholder-neutral-500 text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-neutral-300"
-              >
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-neutral-800 rounded-lg bg-neutral-900 placeholder-neutral-500 text-neutral-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
-                  placeholder="Enter your password"
-                />
-              </div>
-            </div>
-
-            {error && (
-              <div className="text-red-500 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  "Sign in"
-                )}
-              </button>
-            </div>
-            {/* Sign up page link */}
-            <div className="mt-6 text-center text-sm">
-              <span className="text-neutral-400">Don't have an account?</span>{" "}
-              <Link
-                href="/auth/signup"
-                className="text-blue-500 hover:text-blue-400 font-medium"
-              >
-                Create one
-              </Link>
-            </div>
-
-            {/* Reset Password link */}
-            <div className="mt-6 text-center text-sm">
-              <span className="text-neutral-400">Forgot Password?</span>{" "}
-              <Link
-                href="/auth/reset"
-                className="text-blue-500 hover:text-blue-400 font-medium"
-              >
-                Reset Now
-              </Link>
-            </div>
-          </form>
-        </div>
+        <div className="bg-neutral-900/50 h-96 rounded-xl animate-pulse"></div>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<SignInLoader />}>
+      <SignInContent />
+    </Suspense>
   );
 }
