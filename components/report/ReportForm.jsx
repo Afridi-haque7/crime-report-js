@@ -48,11 +48,6 @@ export function ReportForm({ onComplete }) {
     description: "",
     title: "",
   });
-  const key = process.env.GEMINI_API_KEY;
-  if(!key) {
-    console.error("Google api key not found");
-    
-  }
   const [image, setImage] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [coordinates, setCoordinates] = useState({
